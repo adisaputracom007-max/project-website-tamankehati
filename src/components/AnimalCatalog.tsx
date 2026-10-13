@@ -1,24 +1,30 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Plus, Trash2, Edit3, Sparkles, ArrowUpRight, FolderPlus, RefreshCw, X, Check, Image as ImageIcon } from 'lucide-react';
+import { Search, Plus, Trash2, Edit3, Sparkles, ArrowUpRight, FolderPlus, RefreshCw, X, Check, Image as ImageIcon, Lock, ShieldCheck } from 'lucide-react';
 import { ANIMALS_DATA, PRESET_SAMPLE_MESUJI_ANIMALS, Animal } from '../data/animalsData';
 import { AnimalDetailModal } from './AnimalDetailModal';
+import { useAdmin } from '../context/AdminContext';
 
 const STORAGE_KEY = 'taman_kehati_mesuji_animals_catalog';
 
 export const AnimalCatalog: React.FC = () => {
-  // Initialize with empty array by default as requested: "daftar satwa dikosongin agar bisa diisi manual"
+  const { isAdmin, openLoginModal } = useAdmin();
+
+  // Initialize: if saved in localStorage use that, otherwise use official Mesuji sample presets
   const [animals, setAnimals] = useState<Animal[]>(() => {
     if (typeof window !== 'undefined') {
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
-          return JSON.parse(saved);
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+          }
         }
       } catch (e) {
         console.error('Error loading stored animals', e);
       }
     }
-    return ANIMALS_DATA; // Empty []
+    return PRESET_SAMPLE_MESUJI_ANIMALS;
   });
 
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
@@ -218,15 +224,22 @@ export const AnimalCatalog: React.FC = () => {
             </p>
           </div>
 
-          {/* Action Header: Add Animal Button & Quick Search */}
+          {/* Action Header: Add Animal Button (Admin only) & Quick Search */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <button
-              onClick={handleOpenAddForm}
-              className="px-4 py-2.5 bg-emerald-850 hover:bg-emerald-900 bg-emerald-900 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
-            >
-              <Plus className="w-4 h-4 text-emerald-300 stroke-[3]" />
-              <span>Tambah Satwa Manual</span>
-            </button>
+            {isAdmin ? (
+              <button
+                onClick={handleOpenAddForm}
+                className="px-4 py-2.5 bg-emerald-900 hover:bg-emerald-850 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
+              >
+                <Plus className="w-4 h-4 text-emerald-300 stroke-[3]" />
+                <span>Tambah Satwa Manual</span>
+              </button>
+            ) : (
+              <div className="flex items-center gap-2 text-xs font-semibold text-emerald-900 bg-emerald-50 px-3.5 py-2 rounded-lg border border-emerald-200 shadow-2xs">
+                <ShieldCheck className="w-4 h-4 text-emerald-700" />
+                <span>Katalog Resmi Terverifikasi DLH</span>
+              </div>
+            )}
 
             {animals.length > 0 && (
               <div className="relative min-w-[240px]">
@@ -262,22 +275,33 @@ export const AnimalCatalog: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 text-xs">
-            {animals.length > 0 ? (
-              <button
-                onClick={handleClearAll}
-                className="text-stone-500 hover:text-rose-700 transition-colors flex items-center gap-1 cursor-pointer"
-                title="Hapus semua data satwa"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>Kosongkan Daftar</span>
-              </button>
+            {isAdmin ? (
+              animals.length > 0 ? (
+                <button
+                  onClick={handleClearAll}
+                  className="text-stone-500 hover:text-rose-700 transition-colors flex items-center gap-1 cursor-pointer"
+                  title="Hapus semua data satwa"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Kosongkan Daftar</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleLoadSamplePresets}
+                  className="text-emerald-800 hover:text-emerald-950 font-medium underline underline-offset-2 flex items-center gap-1 cursor-pointer"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Muat Contoh Khas Mesuji (Rusa, Belida, Buaya)</span>
+                </button>
+              )
             ) : (
               <button
-                onClick={handleLoadSamplePresets}
-                className="text-emerald-800 hover:text-emerald-950 font-medium underline underline-offset-2 flex items-center gap-1 cursor-pointer"
+                onClick={openLoginModal}
+                className="text-stone-500 hover:text-emerald-900 transition-colors flex items-center gap-1.5 cursor-pointer text-xs"
+                title="Masuk sebagai pengelola untuk menambah/mengubah data"
               >
-                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Muat Contoh Khas Mesuji (Rusa, Belida, Buaya)</span>
+                <Lock className="w-3.5 h-3.5 text-stone-400" />
+                <span>Akses Pengelola</span>
               </button>
             )}
           </div>
@@ -299,23 +323,38 @@ export const AnimalCatalog: React.FC = () => {
               Basis data satwa Taman Kehati Kabupaten Mesuji telah dikosongkan. Anda dapat mulai menambahkan satwa secara manual sesuai dengan koleksi nyata di lapangan.
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <button
-                onClick={handleOpenAddForm}
-                className="px-5 py-2.5 bg-emerald-900 hover:bg-emerald-800 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <Plus className="w-4 h-4 stroke-[3]" />
-                <span>+ Tambah Satwa Pertama</span>
-              </button>
+            {isAdmin ? (
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <button
+                  onClick={handleOpenAddForm}
+                  className="px-5 py-2.5 bg-emerald-900 hover:bg-emerald-800 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4 stroke-[3]" />
+                  <span>+ Tambah Satwa Pertama</span>
+                </button>
 
-              <button
-                onClick={handleLoadSamplePresets}
-                className="px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs sm:text-sm font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>Muat Contoh Satwa Khas Mesuji</span>
-              </button>
-            </div>
+                <button
+                  onClick={handleLoadSamplePresets}
+                  className="px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs sm:text-sm font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Muat Contoh Satwa Khas Mesuji</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center gap-3">
+                <p className="text-xs text-stone-500">
+                  Data satwa resmi sedang dalam pemutakhiran oleh Dinas Lingkungan Hidup Kab. Mesuji.
+                </p>
+                <button
+                  onClick={openLoginModal}
+                  className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Login Pengelola untuk Mengisi</span>
+                </button>
+              </div>
+            )}
           </div>
         ) : filteredAnimals.length === 0 ? (
           <div className="py-16 text-center bg-white rounded-xl border border-stone-200">
@@ -340,23 +379,25 @@ export const AnimalCatalog: React.FC = () => {
                 onClick={() => setActiveAnimal(animal)}
                 className="group bg-white rounded-xl border border-stone-200 hover:border-emerald-700/50 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col relative"
               >
-                {/* Top Action Buttons (Edit & Delete) */}
-                <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 opacity-90 group-hover:opacity-100">
-                  <button
-                    onClick={(e) => handleOpenEditForm(animal, e)}
-                    className="p-1.5 rounded-md bg-stone-900/75 hover:bg-stone-900 text-white backdrop-blur-sm transition-colors cursor-pointer"
-                    title="Edit Satwa"
-                  >
-                    <Edit3 className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={(e) => handleDeleteAnimal(animal.id, animal.name, e)}
-                    className="p-1.5 rounded-md bg-rose-900/80 hover:bg-rose-900 text-white backdrop-blur-sm transition-colors cursor-pointer"
-                    title="Hapus Satwa"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                {/* Top Action Buttons (Edit & Delete) - Only visible for Admin */}
+                {isAdmin && (
+                  <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 opacity-90 group-hover:opacity-100">
+                    <button
+                      onClick={(e) => handleOpenEditForm(animal, e)}
+                      className="p-1.5 rounded-md bg-stone-900/75 hover:bg-stone-900 text-white backdrop-blur-sm transition-colors cursor-pointer"
+                      title="Edit Satwa"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={(e) => handleDeleteAnimal(animal.id, animal.name, e)}
+                      className="p-1.5 rounded-md bg-rose-900/80 hover:bg-rose-900 text-white backdrop-blur-sm transition-colors cursor-pointer"
+                      title="Hapus Satwa"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
 
                 {/* Animal Photo with resilient fallback container */}
                 <div className="relative aspect-[4/3] bg-emerald-950 overflow-hidden flex items-center justify-center">

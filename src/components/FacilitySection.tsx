@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, MapPin, CheckCircle, Accessibility, Plus, Trash2, Edit3, X, Check, FolderPlus, RefreshCw, Sparkles, ChevronRight } from 'lucide-react';
+import { Clock, MapPin, CheckCircle, Accessibility, Plus, Trash2, Edit3, X, Check, FolderPlus, RefreshCw, Sparkles, ChevronRight, Lock, ShieldCheck } from 'lucide-react';
 import { FACILITIES_DATA, PRESET_SAMPLE_MESUJI_FACILITIES, Facility } from '../data/facilitiesData';
+import { useAdmin } from '../context/AdminContext';
 
 const FACILITIES_STORAGE_KEY = 'taman_kehati_mesuji_facilities_catalog';
 
 export const FacilitySection: React.FC = () => {
-  // Initialized to empty array by default as requested
+  const { isAdmin, openLoginModal } = useAdmin();
+
+  // Initialized: if saved in localStorage use that, otherwise use official Mesuji sample presets
   const [facilities, setFacilities] = useState<Facility[]>(() => {
     if (typeof window !== 'undefined') {
       try {
         const saved = localStorage.getItem(FACILITIES_STORAGE_KEY);
         if (saved) {
-          return JSON.parse(saved);
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+          }
         }
       } catch (e) {
         console.error('Error reading saved facilities', e);
       }
     }
-    return FACILITIES_DATA; // Empty []
+    return PRESET_SAMPLE_MESUJI_FACILITIES;
   });
 
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
@@ -190,15 +196,22 @@ export const FacilitySection: React.FC = () => {
             </p>
           </div>
 
-          {/* Action Header: Add Facility Button */}
+          {/* Action Header: Add Facility Button (Admin only) */}
           <div className="flex items-center gap-3">
-            <button
-              onClick={handleOpenAddForm}
-              className="px-4 py-2.5 bg-emerald-850 hover:bg-emerald-900 bg-emerald-900 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
-            >
-              <Plus className="w-4 h-4 text-emerald-300 stroke-[3]" />
-              <span>Tambah Fasilitas Manual</span>
-            </button>
+            {isAdmin ? (
+              <button
+                onClick={handleOpenAddForm}
+                className="px-4 py-2.5 bg-emerald-900 hover:bg-emerald-850 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
+              >
+                <Plus className="w-4 h-4 text-emerald-300 stroke-[3]" />
+                <span>Tambah Fasilitas Manual</span>
+              </button>
+            ) : (
+              <div className="flex items-center gap-2 text-xs font-semibold text-emerald-900 bg-emerald-50 px-3.5 py-2 rounded-lg border border-emerald-200 shadow-2xs">
+                <ShieldCheck className="w-4 h-4 text-emerald-700" />
+                <span>Fasilitas Terverifikasi DLH</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -221,22 +234,33 @@ export const FacilitySection: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 text-xs">
-            {facilities.length > 0 ? (
-              <button
-                onClick={handleClearAll}
-                className="text-stone-500 hover:text-rose-700 transition-colors flex items-center gap-1 cursor-pointer"
-                title="Hapus semua fasilitas"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>Kosongkan Fasilitas</span>
-              </button>
+            {isAdmin ? (
+              facilities.length > 0 ? (
+                <button
+                  onClick={handleClearAll}
+                  className="text-stone-500 hover:text-rose-700 transition-colors flex items-center gap-1 cursor-pointer"
+                  title="Hapus semua fasilitas"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Kosongkan Fasilitas</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleLoadSamplePresets}
+                  className="text-emerald-800 hover:text-emerald-950 font-medium underline underline-offset-2 flex items-center gap-1 cursor-pointer"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Muat Contoh Fasilitas Khas Mesuji (Embung, Edukasi, Mushola)</span>
+                </button>
+              )
             ) : (
               <button
-                onClick={handleLoadSamplePresets}
-                className="text-emerald-800 hover:text-emerald-950 font-medium underline underline-offset-2 flex items-center gap-1 cursor-pointer"
+                onClick={openLoginModal}
+                className="text-stone-500 hover:text-emerald-900 transition-colors flex items-center gap-1.5 cursor-pointer text-xs"
+                title="Masuk sebagai pengelola untuk menambah/mengubah data"
               >
-                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Muat Contoh Fasilitas Khas Mesuji (Embung, Edukasi, Mushola)</span>
+                <Lock className="w-3.5 h-3.5 text-stone-400" />
+                <span>Akses Pengelola</span>
               </button>
             )}
           </div>
@@ -257,23 +281,38 @@ export const FacilitySection: React.FC = () => {
               Basis data fasilitas, wahana, edukasi, kuliner, dan ibadah telah dikosongkan. Anda dapat mulai menambahkan fasilitas secara mandiri sesuai dengan kondisi riil Taman Kehati Kabupaten Mesuji.
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <button
-                onClick={handleOpenAddForm}
-                className="px-5 py-2.5 bg-emerald-900 hover:bg-emerald-800 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <Plus className="w-4 h-4 stroke-[3]" />
-                <span>+ Tambah Fasilitas Pertama</span>
-              </button>
+            {isAdmin ? (
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <button
+                  onClick={handleOpenAddForm}
+                  className="px-5 py-2.5 bg-emerald-900 hover:bg-emerald-800 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4 stroke-[3]" />
+                  <span>+ Tambah Fasilitas Pertama</span>
+                </button>
 
-              <button
-                onClick={handleLoadSamplePresets}
-                className="px-4 py-2.5 bg-white hover:bg-stone-200 text-stone-700 border border-stone-200 text-xs sm:text-sm font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>Muat Contoh Fasilitas Mesuji</span>
-              </button>
-            </div>
+                <button
+                  onClick={handleLoadSamplePresets}
+                  className="px-4 py-2.5 bg-white hover:bg-stone-200 text-stone-700 border border-stone-200 text-xs sm:text-sm font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Muat Contoh Fasilitas Mesuji</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center gap-3">
+                <p className="text-xs text-stone-500">
+                  Data fasilitas resmi sedang dalam pemutakhiran oleh Dinas Lingkungan Hidup Kab. Mesuji.
+                </p>
+                <button
+                  onClick={openLoginModal}
+                  className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Login Pengelola untuk Mengisi</span>
+                </button>
+              </div>
+            )}
           </div>
         ) : filteredFacilities.length === 0 ? (
           <div className="py-16 text-center bg-stone-50 rounded-xl border border-stone-200">
@@ -295,23 +334,25 @@ export const FacilitySection: React.FC = () => {
                 onClick={() => setActiveFacility(facility)}
                 className="group bg-stone-50 rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col cursor-pointer relative"
               >
-                {/* Edit & Delete Actions */}
-                <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 opacity-90 group-hover:opacity-100">
-                  <button
-                    onClick={(e) => handleOpenEditForm(facility, e)}
-                    className="p-1.5 rounded-md bg-stone-900/75 hover:bg-stone-900 text-white backdrop-blur-sm transition-colors cursor-pointer"
-                    title="Edit Fasilitas"
-                  >
-                    <Edit3 className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={(e) => handleDeleteFacility(facility.id, facility.name, e)}
-                    className="p-1.5 rounded-md bg-rose-900/80 hover:bg-rose-900 text-white backdrop-blur-sm transition-colors cursor-pointer"
-                    title="Hapus Fasilitas"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                {/* Edit & Delete Actions (Admin only) */}
+                {isAdmin && (
+                  <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 opacity-90 group-hover:opacity-100">
+                    <button
+                      onClick={(e) => handleOpenEditForm(facility, e)}
+                      className="p-1.5 rounded-md bg-stone-900/75 hover:bg-stone-900 text-white backdrop-blur-sm transition-colors cursor-pointer"
+                      title="Edit Fasilitas"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={(e) => handleDeleteFacility(facility.id, facility.name, e)}
+                      className="p-1.5 rounded-md bg-rose-900/80 hover:bg-rose-900 text-white backdrop-blur-sm transition-colors cursor-pointer"
+                      title="Hapus Fasilitas"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
 
                 {/* Facility Image with Fallback */}
                 <div className="relative aspect-[16/10] bg-emerald-950 overflow-hidden flex items-center justify-center">

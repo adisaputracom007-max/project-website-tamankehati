@@ -11,8 +11,11 @@ import { ScheduleSection } from './components/ScheduleSection';
 import { VisitorGuide } from './components/VisitorGuide';
 import { Footer } from './components/Footer';
 import { DomainModal } from './components/DomainModal';
+import { AdminProvider } from './context/AdminContext';
+import { AdminBanner } from './components/AdminBanner';
+import { AdminLoginModal } from './components/AdminLoginModal';
 
-export default function App() {
+function AppContent() {
   const [isDomainModalOpen, setIsDomainModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<NavTabKey>(() => {
     if (typeof window !== 'undefined') {
@@ -42,7 +45,6 @@ export default function App() {
   const handleSelectTab = (tab: NavTabKey) => {
     setActiveTab(tab);
     if (tab === 'beranda') {
-      // Remove hash from URL without reloading
       if (window.location.hash) {
         history.pushState('', document.title, window.location.pathname + window.location.search);
       }
@@ -58,10 +60,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-stone-50 text-stone-900 selection:bg-emerald-900 selection:text-white">
+      {/* 0. Admin Status Banner (Only visible when logged in as Admin) */}
+      <AdminBanner onSelectTab={handleSelectTab} />
+
       {/* 1. Official Live Domain Banner */}
       <DomainBanner onOpenDomainDetails={handleOpenDomainModal} />
 
-      {/* 2. Top Bar Navigation with separated menu tabs */}
+      {/* 2. Top Bar Navigation with separated menu tabs & Admin login */}
       <Navbar activeTab={activeTab} onSelectTab={handleSelectTab} />
 
       {/* 3. Main Content Flow - Separated by Menu */}
@@ -124,6 +129,17 @@ export default function App() {
         isOpen={isDomainModalOpen}
         onClose={() => setIsDomainModalOpen(false)}
       />
+
+      {/* Admin Login Modal */}
+      <AdminLoginModal />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AdminProvider>
+      <AppContent />
+    </AdminProvider>
   );
 }

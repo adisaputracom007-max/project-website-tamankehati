@@ -1,6 +1,7 @@
 import React from 'react';
-import { Globe, MapPin, Phone, Mail, ShieldCheck, ExternalLink, Compass, Trees, Map, Calendar, Navigation } from 'lucide-react';
+import { Globe, MapPin, Phone, Mail, ShieldCheck, ExternalLink, Compass, Trees, Map, Calendar, Navigation, Lock } from 'lucide-react';
 import { MESUJI_MAPS_URL, NavTabKey } from './Navbar';
+import { useAdmin } from '../context/AdminContext';
 
 interface FooterProps {
   onOpenDomainDetails: () => void;
@@ -8,6 +9,7 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onOpenDomainDetails, onSelectTab }) => {
+  const { isAdmin, openLoginModal } = useAdmin();
   const handleNav = (tab: NavTabKey) => {
     if (onSelectTab) {
       onSelectTab(tab);
@@ -145,6 +147,13 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDomainDetails, onSelectTab
               >
                 <Globe className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Info Domain & SSL</span>
+              </button>
+              <button
+                onClick={openLoginModal}
+                className="w-full py-2 px-3 bg-stone-900/60 hover:bg-stone-850 border border-stone-800/80 text-stone-400 hover:text-white rounded-lg transition-colors text-center flex items-center justify-center gap-1.5 cursor-pointer text-[11px]"
+              >
+                <Lock className="w-3.5 h-3.5 text-stone-400" />
+                <span>{isAdmin ? 'Pengelola: Mode Admin Aktif' : 'Akses Pengelola (Admin DLH)'}</span>
               </button>
               <div className="text-[11px] text-stone-500 pt-1">
                 Buka Setiap Hari: 08:00 - 17:00 WIB

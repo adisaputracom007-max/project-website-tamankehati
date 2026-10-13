@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Menu, X, MapPin, ExternalLink, Compass, Trees, Map, Calendar, Navigation, Home } from 'lucide-react';
+import { Menu, X, MapPin, ExternalLink, Compass, Trees, Map, Calendar, Navigation, Home, Lock, ShieldCheck, LogOut } from 'lucide-react';
+import { useAdmin } from '../context/AdminContext';
 
 export const MESUJI_MAPS_URL =
   'https://www.google.com/maps/place/taman+kehati/@-3.9548981,105.3248272,3052m/data=!3m1!1e3!4m8!1m2!10m1!1e1!3m4!1s0x2e3ec117e269a5df:0xab3695620e5706a3!8m2!3d-3.9531075!4d105.3248656?entry=ttu';
@@ -28,6 +29,7 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, onSelectTab }) => {
+  const { isAdmin, openLoginModal, logout } = useAdmin();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleNavClick = (tabId: NavTabKey) => {
@@ -99,8 +101,31 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onSelectTab }) => {
             })}
           </nav>
 
-          {/* Zone 3: Direct Location Map Link */}
-          <div className="hidden sm:flex items-center gap-3 shrink-0">
+          {/* Zone 3: Admin Status & Direct Location Map Link */}
+          <div className="hidden sm:flex items-center gap-2.5 shrink-0">
+            {isAdmin ? (
+              <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-300 text-amber-900 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                <span className="w-2 h-2 rounded-full bg-amber-600 animate-pulse" />
+                <span>Admin DLH</span>
+                <button
+                  onClick={logout}
+                  className="ml-1 p-1 hover:bg-amber-200 rounded text-amber-950 transition-colors cursor-pointer"
+                  title="Keluar mode admin"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={openLoginModal}
+                className="px-3 py-2 text-xs font-semibold text-stone-600 hover:text-emerald-900 hover:bg-stone-100 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer border border-stone-200"
+                title="Akses pengelola untuk mengisi data"
+              >
+                <Lock className="w-3.5 h-3.5 text-stone-500" />
+                <span>Login Admin</span>
+              </button>
+            )}
+
             <a
               href={MESUJI_MAPS_URL}
               target="_blank"
@@ -159,7 +184,36 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onSelectTab }) => {
               );
             })}
           </nav>
-          <div className="pt-3 border-t border-stone-100">
+          <div className="pt-3 border-t border-stone-100 space-y-2">
+            {isAdmin ? (
+              <div className="flex items-center justify-between p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 font-semibold">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-amber-600 animate-pulse" />
+                  <span>Mode Admin Aktif</span>
+                </div>
+                <button
+                  onClick={() => {
+                    logout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="px-2.5 py-1 bg-white border border-amber-300 rounded font-bold hover:bg-amber-100 transition-colors"
+                >
+                  Keluar Admin
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  openLoginModal();
+                }}
+                className="w-full py-2.5 px-3 rounded-lg border border-stone-300 text-stone-700 text-xs font-semibold hover:bg-stone-50 transition-colors flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Lock className="w-4 h-4 text-stone-500" />
+                <span>Akses Pengelola / Login Admin</span>
+              </button>
+            )}
+
             <a
               href={MESUJI_MAPS_URL}
               target="_blank"
