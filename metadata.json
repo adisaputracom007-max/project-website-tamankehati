@@ -1,0 +1,8 @@
+{
+  "name": "Taman Kehati Mesuji",
+  "description": "Portal Resmi Wisata \u0026 Konservasi Alam Taman Kehati Kabupaten Mesuji (±10 Hektar), Lampung. Jelajahi katalog satwa, fasilitas, dan panduan lokasi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
