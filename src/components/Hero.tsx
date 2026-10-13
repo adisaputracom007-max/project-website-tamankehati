@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, ArrowRight, ShieldCheck, TreePine, MapPin, ExternalLink, Trees, Map, Calendar, Navigation } from 'lucide-react';
+import { Compass, ArrowRight, ShieldCheck, TreePine, MapPin, ExternalLink, Trees, Map, Navigation } from 'lucide-react';
 import { MESUJI_MAPS_URL, NavTabKey } from './Navbar';
 
 interface HeroProps {
@@ -88,13 +88,6 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTab }) => {
               >
                 <Map className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Peta Kawasan (±10 Ha)</span>
-              </button>
-              <button
-                onClick={() => onSelectTab('jadwal')}
-                className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-stone-800/80 hover:bg-stone-700 text-stone-200 hover:text-white border border-stone-700/60 transition-colors flex items-center gap-1.5 cursor-pointer"
-              >
-                <Calendar className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Jadwal Aktivitas</span>
               </button>
               <button
                 onClick={() => onSelectTab('panduan')}

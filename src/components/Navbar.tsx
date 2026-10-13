@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Menu, X, MapPin, ExternalLink, Compass, Trees, Map, Calendar, Navigation, Home, Lock, ShieldCheck, LogOut } from 'lucide-react';
+import { Menu, X, MapPin, ExternalLink, Compass, Trees, Map, Navigation, Home, Lock, ShieldCheck, LogOut } from 'lucide-react';
 import { useAdmin } from '../context/AdminContext';
 
 export const MESUJI_MAPS_URL =
   'https://www.google.com/maps/place/taman+kehati/@-3.9548981,105.3248272,3052m/data=!3m1!1e3!4m8!1m2!10m1!1e1!3m4!1s0x2e3ec117e269a5df:0xab3695620e5706a3!8m2!3d-3.9531075!4d105.3248656?entry=ttu';
 
-export type NavTabKey = 'beranda' | 'satwa' | 'fasilitas' | 'peta' | 'jadwal' | 'panduan';
+export type NavTabKey = 'beranda' | 'satwa' | 'fasilitas' | 'peta' | 'panduan';
 
 export interface NavItem {
   id: NavTabKey;
@@ -19,7 +19,6 @@ export const NAV_ITEMS: NavItem[] = [
   { id: 'satwa', name: 'Koleksi Satwa', shortName: 'Satwa', icon: Compass },
   { id: 'fasilitas', name: 'Fasilitas Wisata', shortName: 'Fasilitas', icon: Trees },
   { id: 'peta', name: 'Peta Kawasan (±10 Ha)', shortName: 'Peta Kawasan', icon: Map },
-  { id: 'jadwal', name: 'Jadwal Aktivitas', shortName: 'Jadwal', icon: Calendar },
   { id: 'panduan', name: 'Lokasi & Panduan', shortName: 'Panduan', icon: Navigation },
 ];
 

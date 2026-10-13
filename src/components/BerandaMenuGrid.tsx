@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, Trees, Map, Calendar, Navigation, ArrowRight, ShieldCheck, Waves, Info, Clock, CheckCircle2 } from 'lucide-react';
+import { Compass, Trees, Map, Navigation, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { NavTabKey } from './Navbar';
 
 interface BerandaMenuGridProps {
@@ -45,18 +45,6 @@ export const BerandaMenuGrid: React.FC<BerandaMenuGridProps> = ({ onSelectTab })
       features: ['Citra Satelit Google Maps', 'Titik Koordinat Akurat', 'Navigasi 6 Zona']
     },
     {
-      id: 'jadwal' as NavTabKey,
-      title: 'Jadwal Aktivitas & Show',
-      tag: 'Agenda Harian',
-      description:
-        'Rangkaian aktivitas harian, sesi feeding time rusa dan satwa air, edukasi konservasi bersama pemandu, serta jadwal patroli lingkungan.',
-      icon: Calendar,
-      accentBg: 'bg-amber-50 text-amber-900 border-amber-200',
-      badgeColor: 'bg-amber-100 text-amber-800',
-      buttonText: 'Buka Jadwal Aktivitas',
-      features: ['Jam Feeding Satwa', 'Edukasi Lingkungan', 'Pengingat Waktu Sesi']
-    },
-    {
       id: 'panduan' as NavTabKey,
       title: 'Lokasi & Panduan Kunjungan',
       tag: 'Rute & Info Wisatawan',
@@ -83,20 +71,18 @@ export const BerandaMenuGrid: React.FC<BerandaMenuGridProps> = ({ onSelectTab })
             Pilih Halaman Menu yang Ingin Dilihat
           </h2>
           <p className="mt-3 text-stone-600 text-sm sm:text-base leading-relaxed">
-            Seluruh konten telah dipisahkan menjadi halaman mandiri agar memudahkan pengunjung mencari informasi satwa, fasilitas, peta, jadwal, atau panduan rute.
+            Seluruh konten telah dipisahkan menjadi halaman mandiri agar memudahkan pengunjung mencari informasi satwa, fasilitas, peta kawasan, atau panduan rute.
           </p>
         </div>
 
-        {/* 5 Separated Content Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {menuCards.map((card, idx) => {
+        {/* 4 Separated Content Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {menuCards.map((card) => {
             const Icon = card.icon;
             return (
               <div
                 key={card.id}
-                className={`flex flex-col justify-between bg-white rounded-2xl p-7 border border-stone-200/90 shadow-sm hover:shadow-md transition-all group ${
-                  idx === 4 ? 'md:col-span-2 lg:col-span-1' : ''
-                }`}
+                className="flex flex-col justify-between bg-white rounded-2xl p-6 sm:p-7 border border-stone-200/90 shadow-sm hover:shadow-md transition-all group"
               >
                 <div>
                   {/* Top Bar of card */}
@@ -109,7 +95,7 @@ export const BerandaMenuGrid: React.FC<BerandaMenuGridProps> = ({ onSelectTab })
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-stone-900 group-hover:text-emerald-900 transition-colors mb-2.5">
+                  <h3 className="text-lg font-bold text-stone-900 group-hover:text-emerald-900 transition-colors mb-2.5">
                     {card.title}
                   </h3>
 

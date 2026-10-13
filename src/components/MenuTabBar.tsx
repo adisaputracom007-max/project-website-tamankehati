@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronRight, Home, Compass, Trees, Map, Calendar, Navigation, ArrowLeft, ArrowRight } from 'lucide-react';
+import { ChevronRight, Home, Compass, Trees, Map, Navigation, ArrowLeft, ArrowRight } from 'lucide-react';
 import { NavTabKey, NAV_ITEMS } from './Navbar';
 
 interface MenuTabBarProps {
@@ -39,12 +39,6 @@ const TAB_METADATA: Record<
     subtitle: 'Tata ruang zonasi kawasan terintegrasi Google Maps citra satelit dan koordinat presisi.',
     badge: 'Zonasi & Satelit',
     icon: Map,
-  },
-  jadwal: {
-    title: 'Jadwal Aktivitas & Sesi Edukasi',
-    subtitle: 'Agenda harian feeding time satwa, penangkaran flora, dan pemanduan edukasi lingkungan.',
-    badge: 'Agenda Harian',
-    icon: Calendar,
   },
   panduan: {
     title: 'Lokasi, Akses Rute & Panduan Kunjungan',

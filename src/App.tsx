@@ -7,7 +7,6 @@ import { MenuTabBar, MenuBottomSwitcher } from './components/MenuTabBar';
 import { AnimalCatalog } from './components/AnimalCatalog';
 import { FacilitySection } from './components/FacilitySection';
 import { ParkMapExplorer } from './components/ParkMapExplorer';
-import { ScheduleSection } from './components/ScheduleSection';
 import { VisitorGuide } from './components/VisitorGuide';
 import { Footer } from './components/Footer';
 import { DomainModal } from './components/DomainModal';
@@ -20,7 +19,7 @@ function AppContent() {
   const [activeTab, setActiveTab] = useState<NavTabKey>(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash.replace('#', '').toLowerCase();
-      if (['satwa', 'fasilitas', 'peta', 'jadwal', 'panduan', 'beranda'].includes(hash)) {
+      if (['satwa', 'fasilitas', 'peta', 'panduan', 'beranda'].includes(hash)) {
         return hash as NavTabKey;
       }
     }
@@ -31,7 +30,7 @@ function AppContent() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '').toLowerCase();
-      if (['satwa', 'fasilitas', 'peta', 'jadwal', 'panduan', 'beranda'].includes(hash)) {
+      if (['satwa', 'fasilitas', 'peta', 'panduan', 'beranda'].includes(hash)) {
         setActiveTab(hash as NavTabKey);
       } else if (!hash) {
         setActiveTab('beranda');
@@ -66,7 +65,7 @@ function AppContent() {
       {/* 1. Official Live Domain Banner */}
       <DomainBanner onOpenDomainDetails={handleOpenDomainModal} />
 
-      {/* 2. Top Bar Navigation with separated menu tabs & Admin login */}
+      {/* 2. Top Bar Navigation with separated menu tabs & Admin status */}
       <Navbar activeTab={activeTab} onSelectTab={handleSelectTab} />
 
       {/* 3. Main Content Flow - Separated by Menu */}
@@ -103,14 +102,7 @@ function AppContent() {
           </div>
         )}
 
-        {/* View 5: Menu Jadwal Aktivitas (Halaman Terpisah) */}
-        {activeTab === 'jadwal' && (
-          <div className="min-h-[60vh]">
-            <ScheduleSection />
-          </div>
-        )}
-
-        {/* View 6: Menu Lokasi & Panduan (Halaman Terpisah) */}
+        {/* View 5: Menu Lokasi & Panduan (Halaman Terpisah) */}
         {activeTab === 'panduan' && (
           <div className="min-h-[60vh]">
             <VisitorGuide />
@@ -130,7 +122,7 @@ function AppContent() {
         onClose={() => setIsDomainModalOpen(false)}
       />
 
-      {/* Admin Login Modal */}
+      {/* Admin Login Modal (Hidden from public view, accessible via secret shortcut/URL) */}
       <AdminLoginModal />
     </div>
   );

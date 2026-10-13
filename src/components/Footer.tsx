@@ -1,5 +1,5 @@
 import React from 'react';
-import { Globe, MapPin, Phone, Mail, ShieldCheck, ExternalLink, Compass, Trees, Map, Calendar, Navigation, Lock } from 'lucide-react';
+import { Globe, MapPin, Phone, Mail, ShieldCheck, ExternalLink, Compass, Trees, Map, Navigation, Lock } from 'lucide-react';
 import { MESUJI_MAPS_URL, NavTabKey } from './Navbar';
 import { useAdmin } from '../context/AdminContext';
 
@@ -78,15 +78,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDomainDetails, onSelectTab
                 >
                   <Map className="w-3.5 h-3.5 text-stone-500" />
                   <span>Peta Kawasan (±10 Ha)</span>
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => handleNav('jadwal')}
-                  className="hover:text-emerald-400 transition-colors flex items-center gap-2 text-left cursor-pointer"
-                >
-                  <Calendar className="w-3.5 h-3.5 text-stone-500" />
-                  <span>Jadwal Aktivitas & Show</span>
                 </button>
               </li>
               <li>
