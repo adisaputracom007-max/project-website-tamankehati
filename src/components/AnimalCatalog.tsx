@@ -294,16 +294,7 @@ export const AnimalCatalog: React.FC = () => {
                   <span>Muat Contoh Khas Mesuji (Rusa, Belida, Buaya)</span>
                 </button>
               )
-            ) : (
-              <button
-                onClick={openLoginModal}
-                className="text-stone-500 hover:text-emerald-900 transition-colors flex items-center gap-1.5 cursor-pointer text-xs"
-                title="Masuk sebagai pengelola untuk menambah/mengubah data"
-              >
-                <Lock className="w-3.5 h-3.5 text-stone-400" />
-                <span>Akses Pengelola</span>
-              </button>
-            )}
+            ) : null}
           </div>
         </div>
 
@@ -320,14 +311,14 @@ export const AnimalCatalog: React.FC = () => {
             </h3>
 
             <p className="text-stone-600 text-sm max-w-md mx-auto leading-relaxed mb-6">
-              Basis data satwa Taman Kehati Kabupaten Mesuji telah dikosongkan. Anda dapat mulai menambahkan satwa secara manual sesuai dengan koleksi nyata di lapangan.
+              Basis data satwa Taman Kehati Kabupaten Mesuji telah dikosongkan.
             </p>
 
             {isAdmin ? (
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <button
                   onClick={handleOpenAddForm}
-                  className="px-5 py-2.5 bg-emerald-900 hover:bg-emerald-800 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-5 py-2.5 bg-emerald-900 hover:bg-emerald-850 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <Plus className="w-4 h-4 stroke-[3]" />
                   <span>+ Tambah Satwa Pertama</span>
@@ -342,18 +333,9 @@ export const AnimalCatalog: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center gap-3">
-                <p className="text-xs text-stone-500">
-                  Data satwa resmi sedang dalam pemutakhiran oleh Dinas Lingkungan Hidup Kab. Mesuji.
-                </p>
-                <button
-                  onClick={openLoginModal}
-                  className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Lock className="w-3.5 h-3.5" />
-                  <span>Login Pengelola untuk Mengisi</span>
-                </button>
-              </div>
+              <p className="text-xs text-stone-500">
+                Data satwa resmi sedang dalam pemutakhiran oleh Dinas Lingkungan Hidup Kab. Mesuji.
+              </p>
             )}
           </div>
         ) : filteredAnimals.length === 0 ? (

@@ -253,16 +253,7 @@ export const FacilitySection: React.FC = () => {
                   <span>Muat Contoh Fasilitas Khas Mesuji (Embung, Edukasi, Mushola)</span>
                 </button>
               )
-            ) : (
-              <button
-                onClick={openLoginModal}
-                className="text-stone-500 hover:text-emerald-900 transition-colors flex items-center gap-1.5 cursor-pointer text-xs"
-                title="Masuk sebagai pengelola untuk menambah/mengubah data"
-              >
-                <Lock className="w-3.5 h-3.5 text-stone-400" />
-                <span>Akses Pengelola</span>
-              </button>
-            )}
+            ) : null}
           </div>
         </div>
 
@@ -278,7 +269,7 @@ export const FacilitySection: React.FC = () => {
             </h3>
 
             <p className="text-stone-600 text-sm max-w-md mx-auto leading-relaxed mb-6">
-              Basis data fasilitas, wahana, edukasi, kuliner, dan ibadah telah dikosongkan. Anda dapat mulai menambahkan fasilitas secara mandiri sesuai dengan kondisi riil Taman Kehati Kabupaten Mesuji.
+              Basis data fasilitas, wahana, edukasi, kuliner, dan ibadah telah dikosongkan.
             </p>
 
             {isAdmin ? (
@@ -300,18 +291,9 @@ export const FacilitySection: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center gap-3">
-                <p className="text-xs text-stone-500">
-                  Data fasilitas resmi sedang dalam pemutakhiran oleh Dinas Lingkungan Hidup Kab. Mesuji.
-                </p>
-                <button
-                  onClick={openLoginModal}
-                  className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Lock className="w-3.5 h-3.5" />
-                  <span>Login Pengelola untuk Mengisi</span>
-                </button>
-              </div>
+              <p className="text-xs text-stone-500">
+                Data fasilitas resmi sedang dalam pemutakhiran oleh Dinas Lingkungan Hidup Kab. Mesuji.
+              </p>
             )}
           </div>
         ) : filteredFacilities.length === 0 ? (

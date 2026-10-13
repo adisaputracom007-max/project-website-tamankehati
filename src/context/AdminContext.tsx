@@ -30,6 +30,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
+  // Sync admin state to localStorage
   useEffect(() => {
     try {
       if (isAdmin) {
@@ -42,6 +43,37 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [isAdmin]);
 
+  // Hidden admin access triggers (No visible button in public)
+  // 1. Keyboard Shortcut: Ctrl + Shift + A (or Alt + Shift + A)
+  // 2. URL parameter / hash: ?admin=login, ?admin=true, or #admin
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey || e.altKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        setIsLoginModalOpen(true);
+      }
+    };
+
+    const checkSecretUrlParam = () => {
+      if (typeof window !== 'undefined') {
+        const search = window.location.search.toLowerCase();
+        const hash = window.location.hash.toLowerCase();
+        if (search.includes('admin') || hash === '#admin') {
+          setIsLoginModalOpen(true);
+        }
+      }
+    };
+
+    checkSecretUrlParam();
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('hashchange', checkSecretUrlParam);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('hashchange', checkSecretUrlParam);
+    };
+  }, []);
+
   const openLoginModal = () => setIsLoginModalOpen(true);
   const closeLoginModal = () => setIsLoginModalOpen(false);
 
@@ -50,6 +82,10 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (VALID_PASSWORDS.includes(trimmed)) {
       setIsAdmin(true);
       setIsLoginModalOpen(false);
+      // Clean up secret url hash if present
+      if (window.location.hash === '#admin') {
+        history.replaceState(null, document.title, window.location.pathname + window.location.search);
+      }
       return true;
     }
     return false;
